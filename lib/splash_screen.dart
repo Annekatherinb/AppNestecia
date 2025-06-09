@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'carousel.dart';
-import 'login.dart';
 
 class SplashScreenApp extends StatefulWidget {
   final bool showOnboarding;
@@ -15,21 +14,26 @@ class SplashScreenApp extends StatefulWidget {
 class _SplashScreenAppState extends State<SplashScreenApp> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedSplashScreen(
-      splash: Stack(
-        children: [
-          Positioned.fill(
-            child: FittedBox(
-              fit: BoxFit.contain,
-              alignment: Alignment.center,
-              child: Image.asset('assets/images/hospital.png'),
-            ),
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Stack(
+      children: [
+        // Fondo fijo que cubre toda la pantalla
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/hospital.png',
+            fit: BoxFit.cover,
+            height: screenHeight,
           ),
-          Center(
+        ),
+        // Pantalla con animación
+        AnimatedSplashScreen(
+          backgroundColor: Colors.transparent, // Evita cubrir el fondo
+          splash: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/images/principalLOG.png', height: 100),
+                Image.asset('assets/images/principalLOG.png', height: 140),
                 const SizedBox(height: 20),
                 const Text(
                   "Anestesia App",
@@ -49,15 +53,13 @@ class _SplashScreenAppState extends State<SplashScreenApp> {
               ],
             ),
           ),
-        ],
-      ),
-      splashIconSize: 400,
-      duration: 2500,
-      backgroundColor: Colors.black,
-      splashTransition: SplashTransition.scaleTransition,
-      pageTransitionType: PageTransitionType.fade,
-
-      nextScreen:const CarouselScreen(),
+          splashIconSize: 400,
+          duration: 2500,
+          splashTransition: SplashTransition.scaleTransition,
+          pageTransitionType: PageTransitionType.fade,
+          nextScreen: const CarouselScreen(),
+        ),
+      ],
     );
   }
 }

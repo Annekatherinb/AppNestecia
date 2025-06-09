@@ -85,10 +85,15 @@ class _CarouselScreenState extends State<CarouselScreen> with TickerProviderStat
   }
 
   Widget _buildPage(OnboardingItem item) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(item.image, height: 220),
+        Image.asset(
+          item.image,
+          height: screenHeight * 0.4,
+        ),
         const SizedBox(height: 30),
         Text(item.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         const SizedBox(height: 10),
@@ -126,6 +131,7 @@ class _CarouselScreenState extends State<CarouselScreen> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFDFBF6),
       body: SafeArea(
         child: Stack(
           children: [
