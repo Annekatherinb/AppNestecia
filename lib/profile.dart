@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -42,11 +43,12 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1D1D1D),
+      backgroundColor: const Color(0xFFECECEC), // Gris claro
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text("Perfil del Usuario"),
-        foregroundColor: Colors.white,
+        backgroundColor:  Color(0XFFFAF3DD), // Color crema
+        foregroundColor: Colors.black87,
+        elevation: 2,
+        title: Text("Perfil del Usuario", style: GoogleFonts.rubik(fontWeight: FontWeight.w600)),
         actions: [
           GestureDetector(
             onTapDown: (_) => setState(() => _editBtnScale = 0.9),
@@ -65,72 +67,47 @@ class _ProfilePageState extends State<ProfilePage> {
             child: AnimatedScale(
               scale: _editBtnScale,
               duration: const Duration(milliseconds: 200),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: editando ? Colors.green : Colors.blueGrey,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: (editando ? Colors.green : Colors.blueGrey).withOpacity(0.6),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  editando ? Icons.save : Icons.edit,
-                  color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: CircleAvatar(
+                  backgroundColor: editando ? Colors.green[400] : Colors.blueGrey,
+                  child: Icon(
+                    editando ? Icons.save : Icons.edit,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () async {
+          IconButton(
+            onPressed: () async {
               final confirmado = await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
-                  backgroundColor: Colors.grey[900],
-                  title: const Text("¿Cerrar sesión?", style: TextStyle(color: Colors.white)),
-                  content: const Text("¿Estás seguro de que deseas salir?", style: TextStyle(color: Colors.white70)),
+                  backgroundColor: Colors.white,
+                  title: const Text("¿Cerrar sesión?"),
+                  content: const Text("¿Estás seguro de que deseas salir?"),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text("Cancelar", style: TextStyle(color: Colors.grey)),
+                      child: const Text("Cancelar"),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text("Sí, salir", style: TextStyle(color: Colors.redAccent)),
+                      child: const Text("Sí, salir", style: TextStyle(color: Colors.red)),
                     ),
                   ],
                 ),
               );
-
               if (confirmado == true) {
                 setState(() => _desvaneciendo = true);
                 await Future.delayed(const Duration(milliseconds: 700));
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
             },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.only(right: 12),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.redAccent.withOpacity(0.5),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.logout, color: Colors.white),
-            ),
-          )
+            icon: const Icon(Icons.logout),
+            color: Colors.red,
+          ),
         ],
       ),
       body: AnimatedOpacity(
@@ -139,12 +116,12 @@ class _ProfilePageState extends State<ProfilePage> {
         child: IgnorePointer(
           ignoring: _desvaneciendo,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/javeriana.png',
-                  height: 80,
+                  'assets/images/JAVE.png',
+                  height: 150,
                 ),
                 const SizedBox(height: 20),
                 _buildTextField("Nombre", _nombreCtrl),
@@ -154,12 +131,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 _buildInfo("Especialización", "$especializacion - Semestre $semestre"),
                 _buildInfo("Fecha de Ingreso", fechaIngreso),
                 const SizedBox(height: 24),
-                const Divider(color: Colors.white70),
-                const Align(
+                const Divider(thickness: 1.2),
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Procedimientos Realizados:",
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.rubik(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -177,17 +158,24 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          Text(title, style: GoogleFonts.rubik(color: Colors.grey[600], fontSize: 14)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 16)),
+          Text(value, style: GoogleFonts.rubik(fontSize: 16, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -197,27 +185,37 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          Text(title, style: GoogleFonts.rubik(color: Colors.grey[600], fontSize: 14)),
           const SizedBox(height: 4),
           editando
               ? TextField(
             controller: controller,
-            style: const TextStyle(color: Colors.white),
+            style: GoogleFonts.rubik(color: Colors.black87),
             cursorColor: Colors.cyan,
             decoration: const InputDecoration(
               border: InputBorder.none,
               isDense: true,
             ),
           )
-              : Text(controller.text, style: const TextStyle(color: Colors.white, fontSize: 16)),
+              : Text(
+            controller.text,
+            style: GoogleFonts.rubik(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );

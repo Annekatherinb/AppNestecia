@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dashboard.dart';
+import 'student_registration_screen.dart';
+
+List<Map<String, String>> estudiantesRegistrados = [
+  {
+    "usuario": "juan123",
+    "contrasena": "123456",
+  },
+  {
+    "usuario": "maria456",
+    "contrasena": "abcdef",
+  },
+];
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,13 +21,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+  final TextEditingController usuarioController = TextEditingController();
+  final TextEditingController contrasenaController = TextEditingController();
+
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-
-  late AnimationController _logoController;
-  late Animation<double> _logoFade;
-  late Animation<Offset> _logoSlide;
 
   @override
   void initState() {
@@ -32,32 +43,21 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    _logoFade = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeIn),
-    );
-    _logoSlide = Tween<Offset>(begin: const Offset(0, -0.2), end: Offset.zero).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
-    );
-
     _controller.forward();
-    _logoController.forward();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _logoController.dispose();
+    usuarioController.dispose();
+    contrasenaController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const azulJaveriana = Color(0xFF00205B);
-    const doradoJaveriana = Color(0xFFF6BE00);
+    const azul = Color(0xFF00205B);
+    const dorado = Color(0xFFF6BE00);
 
     return Scaffold(
       body: FadeTransition(
@@ -71,58 +71,46 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                 'assets/images/Universidad-Javeriana-Cali.jpg',
                 fit: BoxFit.cover,
               ),
-              Container(
-                color: Colors.black.withOpacity(0.6),
-              ),
+              Container(color: Colors.black.withOpacity(0.6)),
               Center(
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Card(
-                      color: Colors.white.withOpacity(0.95),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      elevation: 8,
+                      elevation: 10,
+                      color: Colors.white.withOpacity(0.95),
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            FadeTransition(
-                              opacity: _logoFade,
-                              child: SlideTransition(
-                                position: _logoSlide,
-                                child: Image.asset(
-                                  'assets/images/logo-puj-cali-n.png',
-                                  height: 100,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
+                            Image.asset('assets/images/logo-puj-cali-n.png', height: 100),
+                            const SizedBox(height: 20),
                             const Text(
                               "Pontificia Universidad Javeriana de Cali",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: azulJaveriana,
+                                color: azul,
                               ),
                             ),
                             const SizedBox(height: 20),
-                            const Text(
-                              "Ingresa tus credenciales",
-                              style: TextStyle(fontSize: 16, color: Colors.black87),
-                            ),
+                            const Text("Ingresa tus credenciales"),
                             const SizedBox(height: 20),
-                            const TextField(
-                              decoration: InputDecoration(
+                            TextField(
+                              controller: usuarioController,
+                              decoration: const InputDecoration(
                                 labelText: "Usuario",
                                 border: OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const TextField(
+                            TextField(
+                              controller: contrasenaController,
                               obscureText: true,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "Contraseña",
                                 border: OutlineInputBorder(),
                               ),
@@ -131,36 +119,69 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
+                                onPressed: _verificarCredenciales,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: azulJaveriana,
+                                  backgroundColor: azul,
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const DashboardPage()),
-                                  );
-                                },
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 12),
                                   child: Text("Entrar"),
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 10),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const StudentRegistrationScreen()),
+                                );
+                              },
+                              child: const Text(
+                                "¿Eres nuevo? Regístrate aquí",
+                                style: TextStyle(
+                                  color: azul,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _verificarCredenciales() {
+    final usuario = usuarioController.text.trim();
+    final contrasena = contrasenaController.text.trim();
+
+    final existe = estudiantesRegistrados.any((est) =>
+    est['usuario'] == usuario && est['contrasena'] == contrasena);
+
+    if (existe) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Usuario no registrado. Regístrate antes de continuar."),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 }

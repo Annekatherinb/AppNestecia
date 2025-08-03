@@ -43,6 +43,17 @@ dependencies:
   animated_text_kit: ^4.2.2
   animations: ^2.0.7
   google_fonts: ^6.2.1
+  drift: ^2.27.0
+  path_provider: ^2.1.1
+  path: ^1.9.0
+  url_launcher: ^6.2.1
+  http: any
+  fl_chart: ^0.66.0
+  #firebase_core: ^2.31.0
+  #cloud_firestore: ^4.14.0
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +66,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.3
+  build_runner: ^2.4.6
+  drift_dev: ^2.15.0
 
 flutter_launcher_icons:
   android: true
@@ -77,6 +90,7 @@ flutter:
       - assets/images/javeriana.png
       - assets/images/Universidad-Javeriana-Cali.jpg
       - assets/images/logo-puj-cali-n.png
+      - assets/images/JAVE.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
