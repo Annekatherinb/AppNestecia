@@ -319,7 +319,7 @@ class _SwitchTile extends StatelessWidget {
           subtitle,
           style: GoogleFonts.rubik(fontSize: 12, color: Colors.grey[700]),
         ),
-        activeColor: const Color(0xFF00A89D),
+        activeThumbColor: const Color(0xFF00A89D),
       ),
     );
   }

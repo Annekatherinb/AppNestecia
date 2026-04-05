@@ -141,7 +141,7 @@ class _CarouselScreenState extends State<CarouselScreen> with TickerProviderStat
                   child: CarouselSlider.builder(
                     carouselController: _carouselController,
                     itemCount: items.length,
-                    itemBuilder: (_, index, __) => _buildPage(items[index]),
+                    itemBuilder: (_, index, _) => _buildPage(items[index]),
                     options: CarouselOptions(
                       height: double.infinity,
                       viewportFraction: 1,

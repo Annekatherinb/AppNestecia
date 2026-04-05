@@ -100,8 +100,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               );
               if (confirmado == true) {
+                if (!mounted) return;
                 setState(() => _desvaneciendo = true);
                 await Future.delayed(const Duration(milliseconds: 700));
+                if (!mounted) return;
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
             },

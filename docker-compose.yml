@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+
+  # ─── Base de datos MySQL ───────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: anestesia_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: anestesia_db
+      MYSQL_USER: anestesia_user
+      MYSQL_PASSWORD: anestesia_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql   # crea tablas al iniciar
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── API FastAPI ───────────────────────────────────────────────
+  api:
+    build: .
+    container_name: anestesia_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: mysql+pymysql://anestesia_user:anestesia_pass@db:3306/anestesia_db
+      SECRET_KEY: cambia_esto_por_una_clave_secreta_larga_123
+      ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
