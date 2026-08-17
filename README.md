@@ -33,6 +33,17 @@ Tengamos en cuenta que tenemos:
 
 ## Paso para la Ejecución de la app desde el ambiente Docker
 - docker compose up --build
+
+La primera vez tarda ~2 minutos porque descarga las imágenes.
+Cuando veas esto, todo está funcionando:
+
+```
+anestesia_api  | INFO:     Application startup complete.
+```
+
+Para detenerlo: Ctrl+C
+Para correrlo en segundo plano: `docker compose up -d`
+
 Asegurarse que cada uno de los servicios esté corriendo correctamente
 tengamos en cuenta que tenemos
  
@@ -45,7 +56,9 @@ tengamos en cuenta que tenemos
 
 - Abrir http://localhost:8000 -> debe responder {"status": "ok", "message": "API de Anestesiología funcionando"}
 
-- Documentación de la API: http://localhost:8000/docs
+- Abri su navegador http://localhost:8000/docs
+(Verá la documentación interactiva de Swagger donde puede
+probar cada endpoint sin necesidad de Postman.)
 
 - Ver logs si algo falla: docker compose logs -f
 
@@ -53,6 +66,89 @@ tengamos en cuenta que tenemos
 - flutter pub get
 - flutter run -d chrome
 - api_service.dart ya apunta a http://localhost:8000 en Web y a 10.0.2.2:8000 en emulador Android
+
+### 5.1 Configurar la IP del backend
+
+Abre `lib/services/api_service.dart` y busca:
+
+```dart
+const String _baseUrl = 'http://10.0.2.2:8000';
+```
+
+| Donde corres Flutter | IP a usar            |
+|----------------------|----------------------|
+| Emulador Android     | `10.0.2.2`           |
+| Simulador iOS        | `localhost` o `127.0.0.1` |
+| Dispositivo físico   | IP local de tu PC    |
+
+Para saber tu IP local en Windows: `ipconfig` → IPv4 Address
+Para saber tu IP local en Mac/Linux: `ifconfig` → inet
+
+### 5.4 Permisos de red Android
+
+En `android/app/src/main/AndroidManifest.xml` agrega dentro de `<manifest>`:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+```
+
+Y en la etiqueta `<application>` agrega:
+
+```xml
+android:usesCleartextTraffic="true"
+```
+
+---
+
+## PASO 6 — Flujo de autenticación
+
+```
+REGISTRO
+App Flutter → POST /auth/register → Backend crea usuario en MySQL
+
+LOGIN
+App Flutter → POST /auth/login → Backend devuelve JWT token
+               ApiService guarda el token en SharedPreferences
+
+PETICIONES AUTENTICADAS
+App Flutter → GET /auth/me  (con header: Authorization: Bearer <token>)
+              GET /procedures
+              POST /procedures
+              etc.
+
+OLVIDÉ CONTRASEÑA
+App Flutter → POST /auth/forgot-password  (con email)
+              Backend devuelve reset_token (en dev, en prod sería por email)
+App Flutter → POST /auth/reset-password   (con token + nueva contraseña)
+
+CAMBIAR CONTRASEÑA (autenticado)
+App Flutter → POST /auth/change-password  (contraseña actual + nueva)
+```
+
+---
+
+## ENDPOINTS DISPONIBLES
+
+### Autenticación (`/auth`)
+| Método | Ruta                    | Descripción                         |
+|--------|-------------------------|-------------------------------------|
+| POST   | /auth/register          | Crear cuenta nueva                  |
+| POST   | /auth/login             | Iniciar sesión → devuelve JWT       |
+| GET    | /auth/me                | Ver perfil del usuario autenticado  |
+| PATCH  | /auth/me                | Actualizar nombre/correo/etc        |
+| POST   | /auth/change-password   | Cambiar contraseña (autenticado)    |
+| POST   | /auth/forgot-password   | Solicitar token de recuperación     |
+| POST   | /auth/reset-password    | Restablecer con token               |
+
+### Procedimientos (`/procedures`)
+| Método | Ruta                       | Descripción                        |
+|--------|----------------------------|------------------------------------|
+| POST   | /procedures                | Guardar nuevo procedimiento        |
+| GET    | /procedures                | Listar procedimientos del usuario  |
+| GET    | /procedures/{id}           | Ver detalle de un procedimiento    |
+| GET    | /procedures/cusum/data     | Datos CUSUM por tipo               |
+| GET    | /procedures/metrics/me     | Métricas del dashboard             |
+
 
 ## Paso 6 - Apagar el ambiente
 
